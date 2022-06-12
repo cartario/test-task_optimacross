@@ -37,3 +37,16 @@
     transform: translateY(0px);
   }
 }
+
+* {
+  box-sizing: border-box;
+}
+
+ul {
+  margin: 0; 
+  padding-left: 0;
+ }
+
+li {
+  list-style-type: none;
+}

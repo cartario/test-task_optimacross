@@ -1,0 +1,96 @@
+.board {
+  display: flex;
+  flex-direction: column;
+  width: 80vw;
+  height: 80vh;
+  padding: 20px;
+  border: 1px solid black;  
+}
+
+.data {
+  display: flex;
+  justify-content: space-between;
+  flex-grow: 1; 
+  overflow: hidden; 
+}
+
+.data__col {
+  width: calc(50% - 12px);
+  border: 1px solid black;  
+}
+
+.list {
+  padding: 20px;
+  
+  overflow: scroll;
+}
+
+.list__item {
+  margin: 10px;
+  text-align: left;
+  font-size: 16px;
+  border: 1px solid black;  
+  cursor: pointer;
+}
+
+.list__item:hover {
+  background: tomato;
+  color: white;
+}
+
+.list__item:active {
+  background: gold;
+  color: white;
+}
+
+.list__item--level_1 {
+  margin-left: 20px;
+}
+
+.list__item--level_2 {
+  margin-left: 40px;
+}
+
+.info {
+  padding: 20px;
+  text-align: left;
+}
+
+.info__item {
+  margin-bottom: 10px;
+  font-size: 20px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 20px;  
+}
+
+.controls__btn {
+  margin-left: 20px;
+  padding: 10px;
+  font-weight: bold;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.controls__btn:active {
+  opacity: 0.7;
+}
+
+.controls__btn--apply {
+  background: orange;
+}
+
+.controls__btn--refresh {
+  background: green;
+}
+
+.controls__btn--remove {
+  background: red;
+}
+
+
