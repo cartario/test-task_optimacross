@@ -1,9 +1,21 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import OldApp from './components/old/oldApp';
 import './App.css';
 import './Optimacross.css';
+import {getDataAsync, selectParentEntityLongIds, selectLabels} from './features/optimacross/optimaSlice';
+import { useAppSelector, useAppDispatch } from './app/hooks';
 
 function App() {
+  const parentEntityLongIds = useAppSelector(selectParentEntityLongIds);
+  const labels = useAppSelector(selectLabels);
+  const dispatch = useAppDispatch();
+  
+  
+
+  useEffect(()=>{    
+    dispatch(getDataAsync());
+  }, [dispatch])
+
   return (
     <div className="App">
       <header className="App-header">        
@@ -13,7 +25,30 @@ function App() {
 
             <div className="data__col list">
 
-              <p className="list__item">Root</p>
+              {parentEntityLongIds.map((parentId, index) => {
+                
+                if(parentId===-1){
+                  return (
+                    <>
+                      <p className="list__item list__item--level_top">{index}-{labels[index]}</p>
+
+                      <ul>
+                        <li>
+                          <p className="list__item list__item--level_1">Level-1</p>
+                          <ul>
+                            <li className="list__item list__item--level_2">Level-2</li>
+                          </ul>
+                        </li>
+                      </ul>
+
+                      
+                    </>
+                  )
+                }
+                
+              })}
+
+              {/* <p className="list__item list__item--level_top">Root</p>
               <ul>
                 <li>
                   <p className="list__item list__item--level_1">Level-1</p>
@@ -21,63 +56,7 @@ function App() {
                     <li className="list__item list__item--level_2">Level-2</li>
                   </ul>
                 </li>
-              </ul>
-
-              <p className="list__item">Root</p>
-              <ul>
-                <li className="list__label">
-                  <p className="list__item list__item--level_1">Level-1</p>                  
-                </li>
-                <li className="list__label">
-                  <p className="list__item list__item--level_1">Level-1</p>   
-                  <ul>
-                    <li className="list__item list__item--level_2">Level-2</li>
-                    <li className="list__item list__item--level_2">Level-2</li>
-                    <li className="list__item list__item--level_2">Level-2</li>
-                    <li className="list__item list__item--level_2">Level-2</li>
-                  </ul>               
-                </li>
-              </ul>
-
-              <p className="list__item">Root</p>
-              <ul>
-                <li className="list__label">
-                  <p className="list__item list__item--level_1">Level-1</p>                  
-                </li>
-                <li className="list__label">
-                  <p className="list__item list__item--level_1">Level-1</p>                  
-                </li>
-              </ul>
-
-              <p className="list__item">Root</p>
-              <ul>
-                <li className="list__label">
-                  <p className="list__item list__item--level_1">Level-1</p>                  
-                </li>
-                <li className="list__label">
-                  <p className="list__item list__item--level_1">Level-1</p>                  
-                </li>
-              </ul>
-
-              <p className="list__item">Root</p>
-              <ul>
-                <li className="list__label">
-                  <p className="list__item list__item--level_1">Level-1</p>                  
-                </li>
-                <li className="list__label">
-                  <p className="list__item list__item--level_1">Level-1</p>                  
-                </li>
-              </ul>
-
-              <p className="list__item">Root</p>
-              <ul>
-                <li className="list__label">
-                  <p className="list__item list__item--level_1">Level-1</p>                  
-                </li>
-                <li className="list__label">
-                  <p className="list__item list__item--level_1">Level-1</p>                  
-                </li>
-              </ul>
+              </ul> */}
 
 
             </div>

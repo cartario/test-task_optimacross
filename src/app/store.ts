@@ -1,9 +1,11 @@
 import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import counterReducer from '../features/counter/counterSlice';
+import optimaReducer from '../features/optimacross/optimaSlice';
 
 export const store = configureStore({
   reducer: {
     counter: counterReducer,
+    optima: optimaReducer
   },
 });
 
