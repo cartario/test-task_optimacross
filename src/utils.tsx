@@ -32,7 +32,8 @@ export const getItems = (array: Array<number>, parentChildren: Record<string, Ar
 
     if(!res[each]){
       res[each] = {       
-        value: each
+        value: each,
+        checked: false
       }
     }
 

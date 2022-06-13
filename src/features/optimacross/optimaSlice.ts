@@ -52,6 +52,28 @@ export const optimaSlice = createSlice({
         parentId
       };
     },
+
+    setCheckedItem: (state, action: PayloadAction<{value: number, checked: boolean}>) => {
+      const {value: id, checked} = action.payload;
+      const items = current(state).items;
+      
+      // todo toggle checked item by id  
+      //state.items[key].children[...].checked = !checked     
+    },
+
+    deleteItem: (state) => {
+      const currentItem = current(state).currentItem;
+      const items = current(state).items;
+      debugger;
+      // todo
+      // if(isParent){
+      //      delete parent node
+      //      delete state.items[key]
+      // } else {
+      //      delete node
+      //      delete state.items[key].children[...]
+      // }
+    },
   },
   
   extraReducers: (builder) => {
@@ -70,7 +92,7 @@ export const optimaSlice = createSlice({
   },
 });
 
-export const {setCurrentItem } = optimaSlice.actions;
+export const { setCurrentItem, setCheckedItem, deleteItem } = optimaSlice.actions;
 
 export const selectStatusLoading = (state: RootState) => state.optima.status;
 export const selectCount = (state: RootState) => state.optima.value;

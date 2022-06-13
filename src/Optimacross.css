@@ -99,6 +99,10 @@
   background: red;
 }
 
+.checked {
+  background: green
+}
+
 .close {
   display: none
 }

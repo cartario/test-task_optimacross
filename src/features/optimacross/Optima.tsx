@@ -7,7 +7,9 @@ import {
   selectLabels, 
   selectItems, 
   setCurrentItem, 
-  selectCurrentItem
+  setCheckedItem,
+  deleteItem,
+  selectCurrentItem,
 } from './optimaSlice';
 import { useAppSelector, useAppDispatch } from '../../app/hooks';
 
@@ -27,8 +29,17 @@ function Optima() {
     dispatch(getDataAsync());
   } 
 
-  const onItemClick = (id: number) => {
-    dispatch(setCurrentItem(id));    
+  const onApplyBtnClick = () => {
+    console.log(items)
+  }
+
+  const onRemoveBtnClick = () => {
+    dispatch(deleteItem())
+  }
+
+  const onItemClick = (data: {value: number, checked: boolean}) => {   
+    dispatch(setCurrentItem(data.value)); 
+    dispatch(setCheckedItem(data));  
   }
 
   const getLabel = (id: number) => {
@@ -44,13 +55,13 @@ function Optima() {
             children.push(
                 <ul className={`level-${level}`}>
                     <p 
-                    onClick={()=>onItemClick(data[i].value)}
-                    className={`list__item list__item--level_${level}`}>{getLabel(data[i].value)}</p>
+                    onClick={()=>onItemClick(data[i])}
+                    className={`list__item list__item--level_${level} ${data[i].checked&&'checked'}`}>{getLabel(data[i].value)}</p>
                     {renderTree(data[i].children, true, level+1)}
                 </ul>
             );
         } else {
-            children.push(<li onClick={()=>onItemClick(data[i].value)} key={i} className="list__item list__item--level_2">{getLabel(data[i].value)}</li>);
+            children.push(<li onClick={()=>onItemClick(data[i])} key={i} className={`list__item list__item--level_2 ${data[i].checked&&'checked'}`}>{getLabel(data[i].value)}</li>);
         }
     }
     return <div className={`filter-body`}>{children}</div>;
@@ -59,9 +70,9 @@ function Optima() {
   const renderControls = () => {
     return (
       <div className="controls">
-        <button disabled={isLoading} className="controls__btn controls__btn--apply">Apply</button>
+        <button disabled={isLoading} className="controls__btn controls__btn--apply" onClick={onApplyBtnClick}>Apply</button>
         <button disabled={isLoading} className="controls__btn controls__btn--refresh" onClick={onRefreshBtnCick}>{isLoading ? `Refreshing` : `Refresh`}</button>
-        <button disabled={isLoading} className="controls__btn controls__btn--remove">Remove</button>
+        <button disabled={isLoading} className="controls__btn controls__btn--remove" onClick={onRemoveBtnClick}>Remove</button>
       </div>
     )
   }
