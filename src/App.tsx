@@ -8,13 +8,15 @@ import { useAppSelector, useAppDispatch } from './app/hooks';
 function App() {
   const parentEntityLongIds = useAppSelector(selectParentEntityLongIds);
   const labels = useAppSelector(selectLabels);
-  const dispatch = useAppDispatch();
-  
-  
+  const dispatch = useAppDispatch();  
 
   useEffect(()=>{    
     dispatch(getDataAsync());
-  }, [dispatch])
+  }, [dispatch]);
+
+  const onRefreshBtnCick = () => {
+    dispatch(getDataAsync());
+  }
 
   return (
     <div className="App">
@@ -41,7 +43,7 @@ function App() {
                         </li>
                       </ul>
 
-                      
+
                     </>
                   )
                 }
@@ -73,7 +75,7 @@ function App() {
 
           <div className="controls">
             <button className="controls__btn controls__btn--apply">Apply</button>
-            <button className="controls__btn controls__btn--refresh">Refresh</button>
+            <button className="controls__btn controls__btn--refresh" onClick={onRefreshBtnCick}>Refresh</button>
             <button className="controls__btn controls__btn--remove">Remove</button>
           </div>
 

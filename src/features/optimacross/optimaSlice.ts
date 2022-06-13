@@ -2,14 +2,66 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState, AppThunk } from '../../app/store';
 import { fetchData } from './optimaAPI';
 
+type RawContent = {
+  parentEntityLongIds: Array<number>,
+  labels:  Array<string>,
+  entityLongIds: Array<number>,
+  entityLongIdsMap: Record<number, number>
+}
+
+const getParentChildrenMap = (raw: RawContent) => {
+  const categoriesParentChildren: Record<number, Array<number>> = {}
+
+    for (let i=0; i<raw.parentEntityLongIds.length; i++){
+      const each = raw.parentEntityLongIds[i];      
+
+      if(each===-1){
+        if(!categoriesParentChildren[0]){
+          categoriesParentChildren[0] = [];
+        }        
+        categoriesParentChildren[0].push(raw.entityLongIds[i])
+      } else {
+
+      if(!categoriesParentChildren[each]){
+        categoriesParentChildren[each]=[];        
+      }
+        categoriesParentChildren[each].push(raw.entityLongIds[i]);
+      }
+    }
+
+    return categoriesParentChildren
+}
+
+const getItems = (array: Array<number>, parentChildren: Record<string, Array<any>>) => {      
+  const res: Record<number, any> = {}
+
+  array.forEach((each)=>{
+    const children = parentChildren[each];
+
+    if(!res[each]){
+      res[each] = {
+        children: []
+      }
+    }
+
+    if(!children){          
+      return [];
+    }
+
+    else {      
+      res[each].children.push(getItems(children, parentChildren));                  
+    }  
+  });  
+
+  return res   
+}
+
 export interface OptimaState {
   value: number;
   status: 'idle' | 'loading' | 'failed';
-  content: {
-    parentEntityLongIds: Array<number>,
-    labels:  Array<string>,
-    entityLongIds: Array<number>
-  }
+  content: RawContent;
+  items: Record<any, any> | null,
+  
 }
 
 const initialState: OptimaState = {
@@ -18,8 +70,11 @@ const initialState: OptimaState = {
   content: {
     parentEntityLongIds: [],
     labels: [],
-    entityLongIds: []
-  }
+    entityLongIds: [],  
+    entityLongIdsMap: {}  
+  },
+  items: null,
+  
 };
 
 
@@ -29,40 +84,16 @@ export const getDataAsync = createAsyncThunk(
     const response = await fetchData();   
     const raw = response.entityLabelPages[0];
 
-    const checkChildren = (id: number) => {
-      const idx = raw.entityLongIds.findIndex((each: number)=>each===id);     
-
-      return raw.parentEntityLongIds[idx]
-    }
-
-    let topLevelsIdxs: Array<number> = [];
+    const entityLongIdsMap: Record<string, number> = {}
     
-    raw.parentEntityLongIds.forEach((each: number, i: number)=>{
-      if(each===-1){
-        topLevelsIdxs.push(i)
-      }
+    raw.entityLongIds.forEach((each: number, i:number)=>{
+      entityLongIdsMap[each] =  i;
     });
 
-    const res = topLevelsIdxs.map(each=>{
-      const currentId = raw.entityLongIds[each];
-
-      let childrenIds: Array<number> = [];
-      raw.parentEntityLongIds.forEach((parentId: number, i: number)=>{
-       if(parentId===currentId){
-        childrenIds.push(i)
-       }
-     })      
-
-      return ({
-        currentId,
-        index: each,
-        childrenIds,
-        children: []
-      })
-    })
-
-    debugger;
-    return response.entityLabelPages[0];
+    const parentChildren = getParentChildrenMap(raw);
+    const items = getItems(parentChildren[0], parentChildren);   
+    
+    return {raw: {...response.entityLabelPages[0], entityLongIdsMap}, items };
   }
 );
 
@@ -87,7 +118,8 @@ export const optimaSlice = createSlice({
       })
       .addCase(getDataAsync.fulfilled, (state, action) => {        
         state.status = 'idle';       
-        state.content = action.payload;
+        state.content = action.payload.raw;
+        state.items = action.payload.items;
       })
       .addCase(getDataAsync.rejected, (state) => {
         state.status = 'failed';
