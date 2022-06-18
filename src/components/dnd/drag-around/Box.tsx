@@ -4,7 +4,8 @@ import * as CSS from 'csstype';
 
 const style: CSS.Properties = {
   position: 'absolute',
-  width: '100px',
+  width: '200px',
+  height: '100px',
   border: '1px dashed gray',
   backgroundColor: 'white',
   padding: '0.5rem 1rem',
@@ -13,20 +14,20 @@ const style: CSS.Properties = {
 
 type Box = { 
   title: string, 
-  top: number,
+  bottom: number,
   left: number,
 }
 
-const BoxView = ({left, top, title }: Box) => {
+const BoxView = ({left, bottom, title }: Box) => {
   const [{isDragging}, drag] = useDrag({
     type: ItemTypes.DRAG_AROUND,
-    item: {left, top}, //передаю пропсы внутрь dnd
+    item: {left, bottom}, //передаю пропсы внутрь dnd
     collect: (monitor)=>{
       return {
         isDragging: !!monitor.isDragging()
       }
     }
-  }, [left, top, title])
+  }, [left, bottom, title])
 
   const opacity = isDragging ? 0.5 : 1; 
 
@@ -34,11 +35,11 @@ const BoxView = ({left, top, title }: Box) => {
     <div
       className="box"
       ref={drag}
-      style={{ ...style, left, top, opacity }}
+      style={{ ...style, left, bottom, opacity }}
       data-testid="box"
     >
       {/* {title} */}
-      top - {top}
+      bottom - {bottom}
       left - {left}
     </div>
   )

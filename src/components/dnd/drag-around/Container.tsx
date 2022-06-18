@@ -12,13 +12,13 @@ const styles: CSS.Properties = {
 }
 
 type State = {
-  top: number,
+  bottom: number,
   left: number,
   title: string
 }
 
 const initialState: State = {
-  top: 180, left: 20, title: 'Drag me too'
+  bottom: 0, left: 0, title: 'Drag me too'
 }
 
 const initialStateElement: any = {
@@ -34,32 +34,35 @@ const Container = () => {
   const boxRef: any = useRef();
 
   //delta type is -  XYCoord | null
-  const moveBox = (delta: any, dragItem: {top: number, left: number}, element: any) => { // action in store
-    const left = Math.round(dragItem.left + delta.x) < 0 ? 0 : Math.round(dragItem.left + delta.x)
-    const top = Math.round(dragItem.top + delta.y) < 0 ? 0 : Math.round(dragItem.top + delta.y)
-    
+  const moveBox = (delta: any, dragItem: {bottom: number, left: number}, element: any) => { // action in store    
     const {dragBoundingClientRect, dropBoundingClientRect} = element;
-    const isBottomPosition = dragBoundingClientRect.top + delta.y > dropBoundingClientRect.top + dropBoundingClientRect.height / 2;
-    const isLeftPosition = dropBoundingClientRect.left + dropBoundingClientRect.width / 2 - delta.x > dragBoundingClientRect.left;
 
-    const topRight = !isBottomPosition&&!isLeftPosition;
-    const topLeft = !isBottomPosition&&isLeftPosition;
+    const middleDropPosition = {
+      x: dropBoundingClientRect.x + dropBoundingClientRect.width / 2,
+      y: dropBoundingClientRect.y + dropBoundingClientRect.height / 2
+    };
+    
+    const isLeftPosition = middleDropPosition.x > dragItem.left + delta.x;
+    const isTopPosition = middleDropPosition.y > dragItem.bottom + delta.y;
+
+    const topRight = isTopPosition&&!isLeftPosition;
+    const topLeft = isTopPosition&&isLeftPosition;
     
     switch (true) {
-      case (topRight):
+      case (topRight):        
         setBox({
           ...box,
-          top: 0,
+          bottom: dropBoundingClientRect.height - dragBoundingClientRect.height,
           left: dropBoundingClientRect.width - dragBoundingClientRect.width
         })
         break;
-      case (topLeft):
-        setBox({...box, top: 0, left: 0})
+      case (topLeft):       
+        setBox({...box, bottom: dropBoundingClientRect.height - dragBoundingClientRect.height, left: 0})
         break;      
       default:
         setBox({
           ...box,
-          top: dropBoundingClientRect.height - dragBoundingClientRect.height,
+          bottom: 0,
           left: 0
         })
     }
@@ -67,7 +70,7 @@ const Container = () => {
 
   const [, drop] = useDrop({
     accept: ItemTypes.DRAG_AROUND,
-    drop: (dragItem: {left: number, top: number}, monitor)=>{ //слушатель события
+    drop: (dragItem: {left: number, bottom: number}, monitor)=>{ //слушатель события
       const delta = monitor.getDifferenceFromInitialOffset();
       moveBox(delta, dragItem, element); //callback      
     }
