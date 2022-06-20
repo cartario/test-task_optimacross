@@ -1,6 +1,6 @@
 import { ItemTypes } from '../Constants';
 import {useDrop, XYCoord} from 'react-dnd';
-import {memo, useState, useEffect, useRef, RefObject} from 'react';
+import {memo, useState, useEffect, useRef} from 'react';
 import * as CSS from 'csstype';
 import Box from './Box';
 
@@ -27,6 +27,8 @@ const initialStateElement: any = {
 }
 
 const Container = () => {  
+  
+
   //store 
   const [box, setBox] = useState(initialState);
   const [element, setElement] = useState(initialStateElement);
@@ -47,13 +49,13 @@ const Container = () => {
 
     const topRight = isTopPosition&&!isLeftPosition;
     const topLeft = isTopPosition&&isLeftPosition;
-    
+
     switch (true) {
-      case (topRight):        
+      case (topRight):
         setBox({
           ...box,
           bottom: dropBoundingClientRect.height - dragBoundingClientRect.height,
-          left: dropBoundingClientRect.width - dragBoundingClientRect.width
+          left: dropBoundingClientRect.width - dragBoundingClientRect.width,
         })
         break;
       case (topLeft):       
@@ -63,7 +65,7 @@ const Container = () => {
         setBox({
           ...box,
           bottom: 0,
-          left: 0
+          left: 0,
         })
     }
   }
@@ -72,26 +74,26 @@ const Container = () => {
     accept: ItemTypes.DRAG_AROUND,
     drop: (dragItem: {left: number, bottom: number}, monitor)=>{ //слушатель события
       const delta = monitor.getDifferenceFromInitialOffset();
-      moveBox(delta, dragItem, element); //callback      
+      moveBox(delta, dragItem, element); //callback
     }
-  }, [moveBox]);  
+  }, [moveBox]);
 
-  useEffect(()=>{    
+  useEffect(()=>{
     setElement({
       dropBoundingClientRect: boxRef.current.getBoundingClientRect(),
       dragBoundingClientRect: boxRef.current.firstElementChild.getBoundingClientRect()
     });
     drop(boxRef.current)
-  }, [drop, setElement]);  
+  }, [drop, setElement]);
 
   return (
       <div 
-        ref={boxRef}        
+        ref={boxRef}
         style={styles}
       >
-          <Box          
-            {...box}
-          />      
+        <Box
+          {...box}
+        />
       </div>
     )
 };
